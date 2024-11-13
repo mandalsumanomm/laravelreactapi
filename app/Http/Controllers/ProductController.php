@@ -75,4 +75,123 @@ class ProductController extends Controller
 
         return response()->json($products, 200);
     }
+
+    //delete product
+
+    public function destroy($id)
+{
+    // Find the product by ID
+    $product = Product::find($id);
+
+    if (!$product) {
+        return response()->json(['message' => 'Product not found'], 404);
+    }
+
+    // Delete the product image if it exists
+    if ($product->product_image) {
+        Storage::disk('public')->delete($product->product_image);
+    }
+
+    // Delete the product
+    $product->delete();
+
+    return response()->json(['message' => 'Product deleted successfully.'], 200);
+}
+// Update product
+// public function update(Request $request, $id)
+// {
+//     // Validate only if fields are present in the request
+//     $request->validate([
+//         'name' => 'string|max:255|nullable',
+//         'description' => 'string|nullable',
+//         'sellingPrice' => 'numeric|nullable',
+//         'originalPrice' => 'numeric|nullable',
+//         'category_id' => 'exists:categories,id|nullable',
+//         'unit' => 'string|nullable',
+//         'size' => 'string|nullable',
+//         'color' => 'string|nullable',
+//         'productImage' => 'image|mimes:jpeg,png,jpg|max:2048|nullable',
+//     ]);
+
+//     // Find the product by ID
+//     $product = Product::find($id);
+
+//     if (!$product) {
+//         return response()->json(['message' => 'Product not found'], 404);
+//     }
+
+//     // Directly update fields if they are provided in the request
+//     $product->fill($request->only([
+//         'name', 
+//         'description', 
+//         'sellingPrice', 
+//         'originalPrice', 
+//         'category_id', 
+//         'unit', 
+//         'size', 
+//         'color'
+//     ]));
+
+//     // If a new product image is uploaded, update it
+//     if ($request->hasFile('productImage')) {
+//         // Delete old image if it exists
+//         if ($product->product_image) {
+//             Storage::disk('public')->delete($product->product_image);
+//         }
+//         $productImage = $request->file('productImage')->store('products', 'public');
+//         $product->product_image = $productImage;
+//     }
+
+//     // Save the updated product to the database
+//     $product->save();
+
+//     return response()->json(['message' => 'Product updated successfully.'], 200);
+// }
+
+// // Show a product by ID
+// public function show($id)
+// {
+//     // Find the product by ID
+//     $product = Product::find($id);
+
+//     if (!$product) {
+//         return response()->json(['message' => 'Product not found'], 404);
+//     }
+
+//     // Return the product data
+//     return response()->json($product, 200);
+// }
+
+//update2
+  // Show product details by ID
+  public function show($id)
+  {
+      $product = Product::find($id);
+
+      if (!$product) {
+          return response()->json(['message' => 'Product not found'], 404);
+      }
+
+      return response()->json($product);
+  }
+
+  // Update the product details
+  public function update(Request $request, $id)
+{
+    $product = Product::findOrFail($id);
+
+    $validatedData = $request->validate([
+        'name' => 'required|string|max:255',
+        'category' => 'required|string|max:255', // Assuming category is a string here
+        'selling_price' => 'required|numeric',
+        'original_price' => 'required|numeric',
+        'product_image_url' => 'nullable|string', // Or 'image' if handling file uploads
+    ]);
+
+    $product->update($validatedData);
+
+    return response()->json(['message' => 'Product updated successfully', 'product' => $product]);
+}
+
+
 }

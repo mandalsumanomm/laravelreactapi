@@ -48,4 +48,11 @@ Route::middleware(['auth:sanctum', 'isAPIAdmin'])->group(function () {
     Route::get('/categories', [CategoryController::class, 'index']);
     Route::get('/categories/{id}', [CategoryController::class, 'show']); // Add this route
     Route::put('/categories/{id}', [CategoryController::class, 'update']);
+    Route::delete('/products/{id}', [ProductController::class, 'destroy']);
+    Route::put('/products/{id}', [ProductController::class, 'update']);
+    Route::get('/products/{id}', [ProductController::class, 'show']);
+    Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
+    Route::put('/api/products/{id}', 'ProductController@update');
+
+
 });

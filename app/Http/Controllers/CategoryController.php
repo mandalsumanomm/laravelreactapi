@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CategoryController extends Controller
 {
@@ -23,7 +24,8 @@ class CategoryController extends Controller
 
         return response()->json([
             'message' => 'Category created successfully',
-            'category' => $category
+            'category' => $category,
+            
         ], 201);
     }
 
@@ -51,5 +53,32 @@ class CategoryController extends Controller
 
     return response()->json(['message' => 'Category updated successfully']);
 }
+
+
+
+public function destroy($id)
+{
+    try {
+        $category = Category::findOrFail($id); // Find category by ID, or fail if not found
+        $category->delete(); // Delete the category
+        return response()->json(['message' => 'Category deleted successfully'], 200);
+    } catch (ModelNotFoundException $e) {
+        return response()->json(['message' => 'Category not found'], 404);
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'Error deleting category'], 500);
+    }
+}
+
+    // Fetch a specific category by its ID
+    public function show($id)
+    {
+        $category = Category::find($id); // Find the category by ID
+
+        if (!$category) {
+            return response()->json(['message' => 'Category not found'], 404); // Return 404 if not found
+        }
+
+        return response()->json($category); // Return the category as JSON
+    }
 
 }

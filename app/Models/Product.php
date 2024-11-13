@@ -20,6 +20,7 @@ class Product extends Model
         'size',
         'color',
         'product_image',
+        'gallery_images',
     ];
 
         // Relationship with Category
